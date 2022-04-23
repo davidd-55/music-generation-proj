@@ -13,7 +13,7 @@ intstrument = Piano in starter!
 
 Helper code from https://www.analyticsvidhya.com/blog/2020/01/how-to-perform-automatic-music-generation/
 """
-def read_midi(file, instrument) -> np.ndarray:
+def read_midi(file: str, instrument_select: str="Piano") -> np.ndarray:
     
     print("Loading Music File:",file)
     
@@ -30,7 +30,7 @@ def read_midi(file, instrument) -> np.ndarray:
     for part in s2.parts:
     
         #select elements of only "instrument" type
-        if instrument in str(part): 
+        if instrument_select in str(part): 
         
             notes_to_parse = part.recurse() 
       
@@ -49,9 +49,11 @@ def read_midi(file, instrument) -> np.ndarray:
 
 
 """
+A helper function for exporting note data to a MIDI file.
 
+Helper code from https://www.analyticsvidhya.com/blog/2020/01/how-to-perform-automatic-music-generation/
 """
-def convert_to_midi(prediction_output):
+def convert_to_midi(prediction_output: np.ndarray) -> None:
    
     offset = 0
     output_notes = []
@@ -90,7 +92,7 @@ def convert_to_midi(prediction_output):
 
 """
 A helper function for converting all MIDI (.mid) files in a specified 
-path into a 2D ndarray of notes. 
+path into a 2D ndarray of notes. Basically, it parses training data.
 
 Allows for the specification of frequency for a particular note needed 
 for it to be included in the resulting array; setting freq_threshold <= 0
@@ -98,12 +100,12 @@ yields all notes included.
 
 Helper code from https://www.analyticsvidhya.com/blog/2020/01/how-to-perform-automatic-music-generation/
 """
-def load_midi_files(path, freq_threshold):
+def load_midi_files(path: str, instrument: str="Piano", freq_threshold: int=50)-> np.ndarray:
     # read all the filenames
     files = [i for i in os.listdir(path) if i.endswith(".mid")]
 
     # reading each midi file
-    notes_array = np.array([read_midi(path+i) for i in files])
+    notes_array = np.array([read_midi(path+i, instrument) for i in files])
 
     # convert from 2D array --> 1D array
     notes = [element for note in notes_array for element in note]
@@ -133,6 +135,4 @@ def load_midi_files(path, freq_threshold):
     
     # return 2D ndarray of trimmed notes
     return np.array(trimmed_notes_array)
-
-# TODO 1: new file(s?) for model, converting MIDI notes to i/o data
-# TODO 2: once individual files complete, make a nice CL runner :)
+    
