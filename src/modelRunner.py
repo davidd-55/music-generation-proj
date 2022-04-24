@@ -1,5 +1,4 @@
 import argparse
-import random
 import numpy as np
 
 from keras.models import *
@@ -11,27 +10,24 @@ from midiLoader import load_midi_files, convert_to_midi
 from dataCleaner import generate_io_sequence, map_notes_to_ints
 from modelGenerator import create_wavenet_model
 
-def train_model(
-    model: Sequential,
-    x_train: list,
-    x_test: list,
-    y_train: list,
-    y_test: list) -> None:
+"""
+From a trained model and some test data, generate a note array representation of a 
+musical file. Specify the length (in timesteps) of the generated music.
 
-    mc = ModelCheckpoint('best_model.h5', monitor='val_loss', mode='min', save_best_only=True,verbose=1)
-    history = model.fit(np.array(x_train),np.array(y_train),batch_size=128,epochs=10, validation_data=(np.array(x_test),np.array(y_test)),verbose=1, callbacks=[mc])
-
-def test_model(
+Helper code from https://www.analyticsvidhya.com/blog/2020/01/how-to-perform-automatic-music-generation/
+"""
+def generate_music(
     model: Sequential, 
     test_data: list, 
-    timestep_count: int) -> np.ndarray:
+    timestep_count: int,
+    generated_music_length: int) -> np.ndarray:
 
     ind = np.random.randint(0,len(test_data)-1)
 
     random_music = test_data[ind]
 
     predictions=[]
-    for i in range(10):
+    for i in range(generated_music_length):
 
         random_music = random_music.reshape(1, timestep_count)
 
@@ -44,12 +40,19 @@ def test_model(
     
     return np.array(predictions)
 
+"""
+Run some stuff.
+"""
 def main():
     parser = argparse.ArgumentParser()
-    # parser.add_argument("--path", required=True)
-    parser.add_argument("--path", default="/Users/daviddattile/Dev/music-generation-proj/music/demo/")
+    parser.add_argument("--path", required=True)
+    parser.add_argument("--train", action=argparse.BooleanOptionalAction)
+    parser.add_argument("--saved_model_name", default="best_model.h5")
     parser.add_argument("--freq_threshold", type=int, default=50)
     parser.add_argument("--timestep_count", type=int, default=32)
+    parser.add_argument("--tr_batch_size", type=int, default=128)
+    parser.add_argument("--tr_epoch_count", type=int, default=10)
+    parser.add_argument("--music_generate_length", type=int, default=100)
     parser.add_argument("--instrument", default="Piano")
     args = parser.parse_args()
 
@@ -67,25 +70,41 @@ def main():
     # split into train/test data
     x_tr, x_val, y_tr, y_val = train_test_split(x_seq, y_seq, test_size=0.2, random_state=0)
 
-    # TODO #1 - wtf
-    # TODO #2 - args???
-    # define model
-    model = create_wavenet_model(len(list(set(x_seq.ravel()))), len(list(set(y_seq))), args.timestep_count)
+    # train if asked
+    if (args.train):
 
-    # train model
-    train_model(model, x_tr, x_val, y_tr, y_val)
+        # TODO #1 - wtf
+        # TODO #2 - args???
+        # define model
+        model = create_wavenet_model(len(list(set(x_seq.ravel()))), len(list(set(y_seq))), args.timestep_count)
 
-    # load best fit model
-    model = load_model('best_model.h5')
+        # train model
+        mc = ModelCheckpoint(args.saved_model_name, monitor='val_loss', mode='min', save_best_only=True,verbose=1)
+        model.fit(
+            np.array(x_tr), np.array(y_tr),
+            batch_size=args.tr_batch_size, epochs=args.tr_epoch_count, 
+            validation_data=(np.array(x_val), np.array(y_val)), 
+            verbose=1, callbacks=[mc]
+            )
+
+    # load specified model
+    print("Loading model '" + args.saved_model_name + "'...")
+    model = load_model(args.saved_model_name)
 
     # generate music! 
-    predicted_music = test_model(model, x_val, args.timestep_count)
+    print("Generating music...")
+    predicted_music = generate_music(
+        model, 
+        x_val, 
+        args.timestep_count,
+        args.music_generate_length)
 
     # map from unique int --> note
     predicted_notes = [unique_int_to_note[i] for i in predicted_music]
 
     # save predicted notes to a file
     convert_to_midi(predicted_notes)
+    print("Done!")
 
 if __name__ == "__main__":
     main()

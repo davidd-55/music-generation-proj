@@ -3,6 +3,8 @@ from keras.models import *
 from keras.callbacks import *
 import keras.backend as K
 
+# TODO: more models!
+
 """
 This function generates a Keras WaveNet model with the following input params:
 
