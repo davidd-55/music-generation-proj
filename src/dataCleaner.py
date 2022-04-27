@@ -22,8 +22,8 @@ def generate_io_sequence(notes_array: np.ndarray, timestep_count: int) -> Tuple[
             
             # preparing input and output sequences; input is
             # a 2D array where output is 1D
-            input = note[i:i + timestep_count]
-            output = note[i + timestep_count]
+            input = note[i:i + timestep_count] # this is an array of notes from i to i+timestep_count
+            output = note[i + timestep_count] # this is the single note after the timestep block
             
             # 2D array of notes input --> next note after input notes from example
             x.append(input)
@@ -39,6 +39,7 @@ and a dictionary mapping from int --> note.
 def map_notes_to_ints(x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray, dict]:
     
     # generate unique, unified input/output notes
+    # ravel() changes a multi-dimensional array into a contiguous/flattened array
     unique_notes = list(set(np.append(x.ravel(), y, 0)))
     # unique_x = list(set(x.ravel()))
     # unique_y = list(set(y))
