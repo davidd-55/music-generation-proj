@@ -48,6 +48,7 @@ def main():
     parser.add_argument("--path", required=True)
     parser.add_argument("--train", action=argparse.BooleanOptionalAction)
     parser.add_argument("--saved_model_name", default="best_model.h5")
+    parser.add_argument("--music_file_name", default="music.mid")
     parser.add_argument("--freq_threshold", type=int, default=50)
     parser.add_argument("--timestep_count", type=int, default=32)
     parser.add_argument("--tr_batch_size", type=int, default=128)
@@ -103,7 +104,7 @@ def main():
     predicted_notes = [unique_int_to_note[i] for i in predicted_music]
 
     # save predicted notes to a file
-    convert_to_midi(predicted_notes)
+    convert_to_midi(predicted_notes, args.music_file_name)
     print("Done!")
 
 if __name__ == "__main__":

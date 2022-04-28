@@ -53,7 +53,9 @@ A helper function for exporting note data to a MIDI file.
 
 Helper code from https://www.analyticsvidhya.com/blog/2020/01/how-to-perform-automatic-music-generation/
 """
-def convert_to_midi(prediction_output: np.ndarray) -> None:
+def convert_to_midi(
+    prediction_output: np.ndarray,
+    output_filename: str,) -> None:
    
     offset = 0
     output_notes = []
@@ -87,7 +89,7 @@ def convert_to_midi(prediction_output: np.ndarray) -> None:
         # increase offset each iteration so that notes do not stack
         offset += 1
     midi_stream = stream.Stream(output_notes)
-    midi_stream.write('midi', fp='music.mid')
+    midi_stream.write('midi', fp=output_filename)
 
 
 """
