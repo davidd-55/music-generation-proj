@@ -51,7 +51,7 @@ def main():
     parser.add_argument("--freq_threshold", type=int, default=50)
     parser.add_argument("--timestep_count", type=int, default=32)
     parser.add_argument("--tr_batch_size", type=int, default=128)
-    parser.add_argument("--tr_epoch_count", type=int, default=10)
+    parser.add_argument("--tr_epoch_count", type=int, default=50)
     parser.add_argument("--music_generate_length", type=int, default=100)
     parser.add_argument("--instrument", default="Piano")
     args = parser.parse_args()
