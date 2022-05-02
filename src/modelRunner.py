@@ -54,6 +54,7 @@ def main():
     parser.add_argument("--tr_batch_size", type=int, default=128)
     parser.add_argument("--tr_epoch_count", type=int, default=50)
     parser.add_argument("--music_generate_length", type=int, default=100)
+    parser.add_argument("--train_test_split", type=float, default=0.2)
     parser.add_argument("--instrument", default="Piano")
     args = parser.parse_args()
 
@@ -67,16 +68,12 @@ def main():
     # store a map from int --> note
     x_seq, y_seq, unique_int_to_note = map_notes_to_ints(x, y)
 
-    # TODO: args for t/t split!
     # split into train/test data
-    x_tr, x_val, y_tr, y_val = train_test_split(x_seq, y_seq, test_size=0.2, random_state=0)
+    x_tr, x_val, y_tr, y_val = train_test_split(x_seq, y_seq, test_size=args.train_test_split, random_state=0)
 
     # train if asked
     if (args.train):
-
-        # TODO #1 - wtf
-        # TODO #2 - args???
-        # define model
+        # define model; change here for different model use!
         model = create_custom_wavenet_model(len(list(set(x_seq.ravel()))), len(list(set(y_seq))), args.timestep_count)
 
         # train model
