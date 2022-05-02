@@ -1,5 +1,6 @@
 from typing import Tuple
 import numpy as np
+from collections import *
 
 """
 Generates an x, y / input, output sequence for a model based on the 2D ndarray of
@@ -41,7 +42,11 @@ def map_notes_to_ints(x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndar
     
     # generate unique, unified input/output notes
     # ravel() changes a multi-dimensional array into a contiguous/flattened array
-    unique_notes = list(set(np.append(x.ravel(), y, 0)))
+    # unique_notes_OLD = list(set(np.append(x.ravel(), y, 0)))
+
+    non_unique_list = np.append(x.ravel(), y, 0)
+    unique_notes = list(OrderedDict.fromkeys(non_unique_list))
+
     # unique_x = list(set(x.ravel()))
     # unique_y = list(set(y))
     
