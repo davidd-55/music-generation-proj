@@ -1,6 +1,7 @@
 from keras.layers import *
 from keras.models import *
 from keras.callbacks import *
+from keras.losses import *
 import keras.backend as K
 
 # TODO: more models!
@@ -9,7 +10,7 @@ import keras.backend as K
 This function generates a simple Keras NN model with the following input params:
 
 """
-def create_custom_model_A(input_size: int, output_size: int, timestep_count: int) -> Sequential:
+def create_basic_NN(input_size: int, output_size: int, timestep_count: int) -> Sequential:
     
     K.clear_session()
     
@@ -17,13 +18,13 @@ def create_custom_model_A(input_size: int, output_size: int, timestep_count: int
 
     model.add(Input(shape=(timestep_count)))
 
-    model.add(Dense(32, activation="relu"))
+    model.add(Dense(32, activation="tanh"))
 
-    model.add(Dense(64, activation="relu"))
+    model.add(Dense(64, activation="tanh"))
 
-    model.add(Dense(output_size, activation="relu"))
+    model.add(Dense(output_size, activation="tanh"))
 
-    model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
+    model.compile(loss=Hinge(), optimizer='adam')
 
     model.summary()
 
@@ -31,9 +32,9 @@ def create_custom_model_A(input_size: int, output_size: int, timestep_count: int
 
 
 """
-This function generates a Keras WaveNet model with the following input params:
+This function generates a Keras WaveNet model with default params from our guide at
 
-PARAMS!!
+
 """
 def create_wavenet_model(input_size: int, output_size: int, timestep_count: int) -> Sequential:
     
@@ -72,12 +73,12 @@ def create_wavenet_model(input_size: int, output_size: int, timestep_count: int)
     return model
 
 """
-This function generates a Keras WaveNet model with the following input params:
+This function generates a Keras WaveNet model with the following input params changed from the original wavenet model
 Diffs:
-- activation fxn from relu --> softmax
-- dropout from consistent 0.2 --> 0.1
+- 1 fewer convolutional layer
+- Dropout from 0.2 to 0.1
+- MaxPool1D from 2 to 3
 
-PARAMS!!
 """
 def create_custom_wavenet_model(input_size: int, output_size: int, timestep_count: int) -> Sequential:
     
@@ -91,29 +92,18 @@ def create_custom_wavenet_model(input_size: int, output_size: int, timestep_coun
     model.add(Embedding(input_size, 100, input_length=timestep_count, trainable=True)) 
 
     model.add(Conv1D(64,3, padding='causal',activation='relu'))
-    model.add(Dropout(0.3))
-    model.add(MaxPool1D(2))
+    model.add(Dropout(0.1))
+    model.add(MaxPool1D(3))
         
     model.add(Conv1D(128,3,activation='relu',dilation_rate=2,padding='causal'))
-    model.add(Dropout(0.3))
-    model.add(MaxPool1D(2))
+    model.add(Dropout(0.1))
+    model.add(MaxPool1D(3))
 
-    # new layer didn't work... what about subtracting one?
+    # Subtract a layer!
 
-    # model.add(Conv1D(256,3,activation='softmax',dilation_rate=4,padding='causal'))
-    # model.add(Dropout(0.1))
-    # model.add(MaxPool1D(2))
-
-    # # new conv layer
-    # model.add(Conv1D(512,3,activation='softmax',dilation_rate=4,padding='causal'))
-    # model.add(Dropout(0.0))
-    # model.add(MaxPool1D(2))
-
-    #model.add(Conv1D(256,5,activation='relu'))    
     model.add(GlobalMaxPool1D())
         
-    # model.add(Dense(256, activation='relu'))
-    model.add(Dense(128, activation='relu'))
+    model.add(Dense(256, activation='relu'))
     model.add(Dense(output_size, activation='softmax'))
         
     model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
@@ -122,17 +112,3 @@ def create_custom_wavenet_model(input_size: int, output_size: int, timestep_coun
     model.summary()
 
     return model
-
-# """
-# """
-# def create_lstm_model():
-#   model = Sequential()
-#   model.add(LSTM(128,return_sequences=True))
-#   model.add(LSTM(128))
-#   model.add(Dense(256))
-#   model.add(Activation('relu'))
-#   model.add(Dense(n_vocab))
-#   model.add(Activation('softmax'))
-#   model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
-#   model.summary()
-#   return model

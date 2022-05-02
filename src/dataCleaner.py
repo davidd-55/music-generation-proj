@@ -42,7 +42,7 @@ def map_notes_to_ints(x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndar
     
     # generate unique, unified input/output notes
     # ravel() changes a multi-dimensional array into a contiguous/flattened array
-    # unique_notes_OLD = list(set(np.append(x.ravel(), y, 0)))
+    # unique_notes = list(set(np.append(x.ravel(), y, 0)))
 
     non_unique_list = np.append(x.ravel(), y, 0)
     unique_notes = list(OrderedDict.fromkeys(non_unique_list))
