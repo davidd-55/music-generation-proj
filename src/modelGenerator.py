@@ -6,6 +6,31 @@ import keras.backend as K
 # TODO: more models!
 
 """
+This function generates a simple Keras NN model with the following input params:
+
+"""
+def create_custom_model_A(input_size: int, output_size: int, timestep_count: int) -> Sequential:
+    
+    K.clear_session()
+    
+    model = Sequential()
+
+    model.add(Input(shape=(timestep_count)))
+
+    model.add(Dense(32, activation="relu"))
+
+    model.add(Dense(64, activation="relu"))
+
+    model.add(Dense(output_size, activation="relu"))
+
+    model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
+
+    model.summary()
+
+    return model
+
+
+"""
 This function generates a Keras WaveNet model with the following input params:
 
 PARAMS!!
