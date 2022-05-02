@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 
 from midiLoader import load_midi_files, convert_to_midi
 from dataCleaner import generate_io_sequence, map_notes_to_ints
-from modelGenerator import create_wavenet_model, create_custom_model_A
+from modelGenerator import *
 
 """
 From a trained model and some test data, generate a note array representation of a 
@@ -77,7 +77,7 @@ def main():
         # TODO #1 - wtf
         # TODO #2 - args???
         # define model
-        model = create_custom_model_A(len(list(set(x_seq.ravel()))), len(list(set(y_seq))), args.timestep_count)
+        model = create_custom_wavenet_model(len(list(set(x_seq.ravel()))), len(list(set(y_seq))), args.timestep_count)
 
         # train model
         mc = ModelCheckpoint(args.saved_model_name, monitor='val_loss', mode='min', save_best_only=True,verbose=1)
