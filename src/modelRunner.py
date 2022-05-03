@@ -47,7 +47,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", required=True)
     parser.add_argument("--train", action=argparse.BooleanOptionalAction)
-    parser.add_argument("--saved_model_name", default="best_model.h5")
+    parser.add_argument("--saved_model_name", default="model.h5")
     parser.add_argument("--music_file_name", default="music.mid")
     parser.add_argument("--freq_threshold", type=int, default=50)
     parser.add_argument("--timestep_count", type=int, default=32)
@@ -74,6 +74,8 @@ def main():
     # train if asked
     if (args.train):
         # define model; change here for different model use!
+        # model = create_basic_NN(len(list(set(x_seq.ravel()))), len(list(set(y_seq))), args.timestep_count)
+        # model = create_wavenet_model(len(list(set(x_seq.ravel()))), len(list(set(y_seq))), args.timestep_count)
         model = create_custom_wavenet_model(len(list(set(x_seq.ravel()))), len(list(set(y_seq))), args.timestep_count)
 
         # train model

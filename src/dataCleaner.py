@@ -37,24 +37,16 @@ Maps x, y / input, output sequence of notes to ints for network input. Returns
 the 2D ndarray input sequence of ints, the 1D ndarray output sequence of ints,
 and a dictionary mapping from int --> note.
 """
-# TODO: map ints to notes in pitch order?
 def map_notes_to_ints(x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray, dict]:
     
     # generate unique, unified input/output notes
     # ravel() changes a multi-dimensional array into a contiguous/flattened array
-    # unique_notes = list(set(np.append(x.ravel(), y, 0)))
-
     non_unique_list = np.append(x.ravel(), y, 0)
     unique_notes = list(OrderedDict.fromkeys(non_unique_list))
-
-    # unique_x = list(set(x.ravel()))
-    # unique_y = list(set(y))
     
 
     # map unique notes to integers
     unique_note_to_int = dict((note, number) for number, note in enumerate(unique_notes))
-    # x_note_to_int = dict((note, number) for number, note in enumerate(unique_x))
-    # y_note_to_int = dict((note, number) for number, note in enumerate(unique_y))
 
     # prepare input (x) sequence of notes mapped to ints
     x_seq=[]

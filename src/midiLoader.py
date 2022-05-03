@@ -20,28 +20,28 @@ def read_midi(file: str, instrument_select: str="Piano") -> np.ndarray:
     notes = []
     notes_to_parse = None
     
-    #parsing a midi file
+    # parsing a midi file
     midi = converter.parse(file)
   
-    #grouping based on different instruments
+    # grouping based on different instruments
     s2 = instrument.partitionByInstrument(midi)
 
-    #Looping over all the instruments
+    # Looping over all the instruments
     for part in s2.parts:
     
-        #select elements of only "instrument" type
+        # select elements of only "instrument" type
         if instrument_select in str(part): 
         
             notes_to_parse = part.recurse() 
       
-            #finding whether a particular element is note or a chord
+            # finding whether a particular element is note or a chord
             for element in notes_to_parse:
                 
-                #note
+                # note
                 if isinstance(element, note.Note):
                     notes.append(str(element.pitch))
                 
-                #chord
+                # chord
                 elif isinstance(element, chord.Chord):
                     notes.append('.'.join(str(n) for n in element.normalOrder))
 
